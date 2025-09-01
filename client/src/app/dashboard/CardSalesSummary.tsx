@@ -1,6 +1,6 @@
 import { useGetDashboardMetricsQuery } from "@/state/api";
 import { TrendingUp } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Bar,
   BarChart,
@@ -11,11 +11,22 @@ import {
   YAxis,
 } from "recharts";
 
+type TimeFrame = "daily" | "weekly" | "monthly";
+
 const CardSalesSummary = () => {
   const { data, isLoading, isError } = useGetDashboardMetricsQuery();
-  const salesData = data?.salesSummary || [];
+  const [timeframe, setTimeframe] = useState<TimeFrame>("weekly");
 
-  const [timeframe, setTimeframe] = useState("weekly");
+  // Sort and filter sales data
+  const salesData = useMemo(() => {
+    if (!data?.salesSummary) return [];
+
+    const sortedData = [...data.salesSummary].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    return sortedData;
+  }, [data?.salesSummary]);
 
   const totalValueSum =
     salesData.reduce((acc, curr) => acc + curr.totalValue, 0) || 0;
@@ -76,64 +87,63 @@ const CardSalesSummary = () => {
               <select
                 className="shadow-sm border border-gray-300 bg-white p-2 rounded"
                 value={timeframe}
-                onChange={(e) => {
-                  setTimeframe(e.target.value);
-                }}
+                onChange={(e) => setTimeframe(e.target.value as TimeFrame)}
               >
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
               </select>
             </div>
+
             {/* CHART */}
-            <ResponsiveContainer width="100%" height={350} className="px-7">
-              <BarChart
-                data={salesData}
-                margin={{ top: 0, right: 0, left: -25, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="" vertical={false} />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={(value) => {
-                    const date = new Date(value);
-                    return `${date.getMonth() + 1}/${date.getDate()}`;
-                  }}
-                />
-                <YAxis
-                  tickFormatter={(value) => {
-                    return `$${(value / 1000000).toFixed(0)}m`;
-                  }}
-                  tick={{ fontSize: 12, dx: -1 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip
-                  formatter={(value: number) => [
-                    `$${value.toLocaleString("en")}`,
-                  ]}
-                  labelFormatter={(label) => {
-                    const date = new Date(label);
-                    return date.toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    });
-                  }}
-                />
-                <Bar
-                  dataKey="totalValue"
-                  fill="#3182ce"
-                  barSize={10}
-                  radius={[10, 10, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="w-full px-7">
+              <ResponsiveContainer width="100%" height={350}>
+                <BarChart
+                  data={salesData}
+                  margin={{ top: 0, right: 0, left: -25, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="" vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return `${date.getMonth() + 1}/${date.getDate()}`;
+                    }}
+                  />
+                  <YAxis
+                    tickFormatter={(value) => `$${(value / 1000000).toFixed(0)}m`}
+                    tick={{ fontSize: 12, dx: -1 }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip
+                    formatter={(value: number) => [
+                      `$${value.toLocaleString("en")}`,
+                    ]}
+                    labelFormatter={(label) => {
+                      const date = new Date(label);
+                      return date.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      });
+                    }}
+                  />
+                  <Bar
+                    dataKey="totalValue"
+                    fill="#3182ce"
+                    barSize={10}
+                    radius={[10, 10, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           {/* FOOTER */}
           <div>
             <hr />
-            <div className="flex justify-between items-center mt-6 text-sm px-7 mb-4">
+            <div className="flex justify-between items-center mt-2 text-sm px-7 mb-4">
               <p>{salesData.length || 0} days</p>
               <p className="text-sm">
                 Highest Sales Date:{" "}
