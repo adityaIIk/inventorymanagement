@@ -1,4 +1,6 @@
-import { useRef } from "react";
+"use client";
+
+import React, { useRef } from "react";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
   TypedUseSelectorHook,
@@ -9,7 +11,6 @@ import {
 import globalReducer from "@/state";
 import { api } from "@/state/api";
 import { setupListeners } from "@reduxjs/toolkit/query";
-
 import {
   persistStore,
   persistReducer,
@@ -23,25 +24,24 @@ import {
 import { PersistGate } from "redux-persist/integration/react";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 
-/* REDUX PERSISTENCE */
 const createNoopStorage = () => {
   return {
-    getItem(_key: any) {
+    getItem() {
       return Promise.resolve(null);
     },
-    setItem(_key: any, value: any) {
+    setItem(_: string, value: string) {
       return Promise.resolve(value);
     },
-    removeItem(_key: any) {
+    removeItem() {
       return Promise.resolve();
     },
   };
 };
 
 const storage =
-  typeof window === "undefined"
-    ? createNoopStorage()
-    : createWebStorage("local");
+  typeof window !== "undefined"
+    ? createWebStorage("local")
+    : createNoopStorage();
 
 const persistConfig = {
   key: "root",
@@ -54,7 +54,6 @@ const rootReducer = combineReducers({
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-/* REDUX STORE */
 export const makeStore = () => {
   return configureStore({
     reducer: persistedReducer,
@@ -67,14 +66,12 @@ export const makeStore = () => {
   });
 };
 
-/* REDUX TYPES */
 export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-/* PROVIDER */
 export default function StoreProvider({
   children,
 }: {
@@ -93,5 +90,5 @@ export default function StoreProvider({
         {children}
       </PersistGate>
     </Provider>
-  );
+  );
 }
