@@ -2,7 +2,7 @@
 
 A full-stack inventory management application built with Next.js, Express.js, PostgreSQL, and Prisma. This system provides comprehensive inventory tracking, user management, expense monitoring, and analytics dashboard.
 
-[Inventory Management Dashboard](https://via.placeholder.com/800x400/1f2937/ffffff?text=Inventory+Management+Dashboard)
+[Inventory Management Dashboard](https://inventory-frontend-sandy-two.vercel.app)
 
 ## 🚀 Live Demo
 
