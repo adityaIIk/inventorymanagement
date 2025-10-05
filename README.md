@@ -68,34 +68,8 @@ A full-stack inventory management application built with Next.js, Express.js, Po
 ## 🏗 Project Structure
 
 
-inventory-management/
-├── client/                 # Frontend (Next.js)
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── (components)/
-│   │   │   ├── dashboard/
-│   │   │   ├── products/
-│   │   │   ├── users/
-│   │   │   ├── expenses/
-│   │   │   └── inventory/
-│   │   ├── state/          # Redux store and API
-│   │   └── types/          # TypeScript types
-│   ├── public/
-│   ├── package.json
-│   └── next.config.ts
-│
-├── server/                 # Backend (Express.js)
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── routes/
-│   │   └── index.ts
-│   ├── prisma/
-│   │   ├── schema.prisma
-│   │   ├── migrations/
-│   │   └── seed.ts
-│   └── package.json
-│
-└── README.md
+<img width="642" height="838" alt="image" src="https://github.com/user-attachments/assets/09282034-b03e-4a76-b066-a0ea1af57487" />
+
 
 
 ## 🚀 Getting Started
